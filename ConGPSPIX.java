@@ -1,6 +1,6 @@
 package GIS;
 
-import GUI.My_GUI;
+import GUI.MyFrame;
 
 public class ConGPSPIX {
 	/**
@@ -8,9 +8,8 @@ public class ConGPSPIX {
 	 * 
 	 */
 	
-
 	public static void getXYfromLatLon(double latitude, double longitude) {
-		My_GUI frame = new My_GUI();
+		MyFrame frame = new MyFrame();
 		// get x value
 		double mapWidth = frame.myImage.getWidth(), mapHeight = frame.myImage.getHeight();
 		double pX = ((longitude+180.0)*(mapWidth/360.0));
@@ -21,7 +20,7 @@ public class ConGPSPIX {
 		// get y value
 		double mercN = Math.log(Math.tan((Math.PI/4.0)+(latRad/2.0)));
 		double pY = (mapHeight/2.0)-(mapWidth*mercN/(2.0*Math.PI));
-		System.out.println("x = "+pX+", y = "+pY);
+		System.out.println("x = "+(int)pX+", y = "+(int)pY);
 	}
 
 	public static void main(String[] args) {
