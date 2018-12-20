@@ -9,7 +9,11 @@ import Coords.MyCoords;
 import Geom.Point3D;
 
 public class Map {
-
+/**
+ * A class that represents a map that contains an image file of the map you want. 
+ * The class enables conversion of global representation coordinates to pixels in the image and vice versa. 
+ * The class represents the calculation of distances between 2 pixel points on the map and the angle between them.
+ */
 	static MyCoords coo= new MyCoords();
 
 	public static void mapFrame() {
