@@ -7,7 +7,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
 
-	class MapScale extends JPanel{
+	public class MapScale extends JPanel{
 		
 	  private static final long serialVersionUID = 1L;
 	  

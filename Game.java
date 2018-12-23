@@ -5,7 +5,11 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
+
+
 
 public class Game {
 /**
@@ -80,9 +84,40 @@ public class Game {
 	public void setFruitArray(List<Fruit> fruitArray) {
 		this.fruitArray = fruitArray;
 	}
+	
+	public Iterator<Pacman> iteratorP() {
+		
+//		if (iteratorP().hasNext()) System.out.println("There is no more pacmans");
+		
+		try 
+		{
+		if(!iteratorP().hasNext())
+		{
+		return (Iterator<Pacman>) iteratorP().next();
+		}
+		else
+			return null;
+		}
+		
+		catch(NoSuchElementException e)
+		{
+			
+		}
+		return null;
+	}
+	
+	public Iterator<Fruit> iteratorF() {
+		return this.fruitArray.iterator();
 
+	}
 	public static void main(String[] args) {
-		String csv_file_name="data1.csv";
+		String csvFile1 ="game_1543684662657.csv";//Read from this file
+		//		String csvFile2 = "game_1543684662657.csv"; 
+		//		String csvFile3 ="game_1543693822377.csv";
+		//		String csvFile4 =" game_1543693911932.csv";
+		//		String csvFile5 =" game_1543693911932_a.csv";
+		//		String csvFile6 =" game_1543693911932_b.csv";
+		
 		Game g=new Game();
 
 		Pacman P=new Pacman();
@@ -91,7 +126,7 @@ public class Game {
 		System.out.println(g.addPacman(P));
 		System.out.println(g.getPacmanArray());
 		System.out.println(g.getFruitArray());
-		g.toString();
+		
 
 	}
 }

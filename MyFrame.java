@@ -1,8 +1,17 @@
 
 package GUI;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
@@ -12,10 +21,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 
 import GIS.Fruit;
+import GIS.Game;
+import GIS.MapScale;
 import GIS.Pacman;
+
 /**
  *
  * 
@@ -29,10 +47,11 @@ public class MyFrame extends JFrame implements MouseListener {
 	// private variables
 	private Container window;
 	private JPanel _panel;
-	private Graphics _paper;
+	private static Graphics _paper;
 	private int x, y;
 	private boolean isGamer;
 	public BufferedImage myImage;
+	static Game g=new Game();
 
 	public MyFrame(){
 		super("Map Demo"); //setTitle("Map Counter");  // "super" Frame sets its title
@@ -40,7 +59,8 @@ public class MyFrame extends JFrame implements MouseListener {
 		//	The new location of the top-left corner is  specified by x and y, 
 		//	and the new size is specified by width and height
 		//	setBounds(x,y,width,height)
-		//this.setBounds(0,0,1433,700); //setSize(1433,700);        // "super" Frame sets its initial window size
+		//this.setBounds(0,0,1433,700); //setSize(1433,700);       
+		// "super" Frame sets its initial window size
 		//      Exit the program when the close-window button clicked
 		try {
 			 myImage = ImageIO.read(new File("Ariel1.png"));
@@ -49,41 +69,53 @@ public class MyFrame extends JFrame implements MouseListener {
 		}	
 		//System.out.println("The size of the image: ("+myImage.getWidth()+","+myImage.getHeight()+")");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		pack();
-		
+		//pack();	
 
 	}
 	
 	public MyFrame(String csv_file_name) {
 		this.pacmanArray = new ArrayList<Pacman>();
 		this.fruitArray = new ArrayList<Fruit>();
+		new Game(this.fruitArray, this.pacmanArray );
 		String line = "";
 		String cvsSplitBy = ",";
-		try (BufferedReader br = new BufferedReader(new FileReader(new File(csv_file_name)))) {
+		try (BufferedReader br = new BufferedReader(new FileReader(new File(csv_file_name)))) 
+		{
 			int counter = 0;
-			while ((line = br.readLine()) != null) {
-				String[] userInfo = line.split(cvsSplitBy);
+			br.readLine();
+			
+			while ((line = br.readLine()) != null) //if the third line in the read file is not empty, read from it
+			{
+				String[] userInfo = line.split(cvsSplitBy); //userInfo is an array of all the information in a row
 				if(counter > 0) {
 					if(userInfo[0].contains("P")) {
-						Pacman pacman = new Pacman(Double.parseDouble(userInfo[2]),Double.parseDouble(userInfo[1]),Integer.parseInt(userInfo[3]) , Double.parseDouble(userInfo[4]), Double.parseDouble(userInfo[5]),0);
+						Pacman pacman = new Pacman(Double.parseDouble(userInfo[3]),Double.parseDouble(userInfo[2]),Double.parseDouble(userInfo[4]) , Double.parseDouble(userInfo[5]), Double.parseDouble(userInfo[6]),0);
 						pacmanArray.add(pacman);
 					}
 					else {
-						Fruit fruit = new Fruit(Double.parseDouble(userInfo[2]),Double.parseDouble(userInfo[1]),Integer.parseInt(userInfo[3]));
+						Fruit fruit = new Fruit(Double.parseDouble(userInfo[3]),Double.parseDouble(userInfo[2]),Double.parseDouble(userInfo[4]));
 						fruitArray.add(fruit);
 					}
 				}
 				counter++;
 			}
 		}
-		catch (IOException e) 
+
+catch (IOException e) 
 		{
 			e.printStackTrace();
 		}
 	}
 
+//	private void g( List<Fruit> fruitArray2, List<Pacman> pacmanArray2) {
+//		
+//		g(this.fruitArray,this.pacmanArray);
+//		
+//	}
+
 	public void createGui(){              				
 		//	A Container is a component  that can contain other GUI components
+		
 		window = this.getContentPane(); 
 		window.setLayout(new FlowLayout());
 
@@ -180,11 +212,26 @@ public class MyFrame extends JFrame implements MouseListener {
 	public void mouseEntered(MouseEvent event){}
 	
 	public static void main(String[] args) {
-		MyFrame frame = new MyFrame();
+		 try {
+	       
+		 
+		MyFrame frame = new MyFrame("game_1543684662657.csv");
+		MapScale scale= new MapScale("Ariel1.png");
 //		new MyFrame("p1_Ariel.csv");
 		frame.setBounds(0, 0, 1433, 642);
 		frame.createGui();
 		frame.setVisible(true);
+//		scale.invalidate();
+//		scale.getPreferredSize();
+//		scale.paintComponent(_paper);
+		//Map.mapFrame();
+		//ShortestPathAlgo(g);
+		 }
+		catch (NullPointerException  e) {
+            System.err.println("NullPointerException caught");
+        }
+	
 	}
+
 
 }

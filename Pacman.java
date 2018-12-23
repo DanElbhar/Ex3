@@ -1,5 +1,7 @@
 package GIS;
 
+import java.util.ArrayList;
+
 public class Pacman{
 /**
  * A class that represents a "robot" with a location, orientation and ability to move (at defined speed)
@@ -86,6 +88,13 @@ public class Pacman{
 
 	public void setAngle(double angle) {
 		this.angle = angle;
+	}
+
+	public Object getpath() {
+		Pacman pac= new Pacman();
+		ArrayList<Pacman> path_of_pac=new ArrayList<Pacman>();
+		
+		return path_of_pac.add(pac);
 	}
 
 

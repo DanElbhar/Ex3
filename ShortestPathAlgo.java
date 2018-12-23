@@ -1,5 +1,11 @@
 package GIS;
+import java.beans.ExceptionListener;
 import java.lang.StackOverflowError;
+
+import javax.swing.JFrame;
+
+import GUI.MyFrame;
+import java.io.IOException;
 
 public class ShortestPathAlgo {
 /**
@@ -9,22 +15,33 @@ public class ShortestPathAlgo {
  *  to eat the fruits.
  * 
  */
-	Game g= new Game();
+	static Game g= new Game();
+	MyFrame frame= new MyFrame();
 	static double Pac_x=g.getPacmanArray().iterator().next().getX();
 	static double Pac_y=g.getPacmanArray().iterator().next().getY();
 	static double Fru_x=g.getFruitArray().iterator().next().getX();
 	static double Fru_y=g.getFruitArray().iterator().next().getY();
-	boolean Pac_hasNext=g.getPacmanArray().iterator().hasNext();
-	boolean Fruit_hasNext=g.getFruitArray().iterator().hasNext();
-	double Pac_speed=g.getPacmanArray().iterator().next().getSpeed();
+	static boolean Pac_hasNext=g.getPacmanArray().iterator().hasNext();
+	static boolean Fruit_hasNext=g.getFruitArray().iterator().hasNext();
+	static double Pac_speed=g.getPacmanArray().iterator().next().getSpeed();
 	
-	public ShortestPathAlgo(Game g)
+	/*
+	 * Contractors 
+	 */
+	public ShortestPathAlgo(Game g) 
 	{
+		//if the file of the game is empty
 		if(g.getPacmanArray()==null && g.getFruitArray()==null)
 		{
 			System.out.println("The game is empty");
 		}
-		
+		//if the pacman or the fruit are out of range
+		if(Pac_x <frame.myImage.getWidth() || Fru_x <frame.myImage.getWidth() || 
+				Pac_y <frame.myImage.getHeight() || Fru_y <frame.myImage.getHeight() )
+		{
+			System.out.println("The point is out of the limit");
+		}
+		//If there are still pecans and fruits in the game
 		if(g.getPacmanArray()!=null && g.getFruitArray()!=null)
 		{
 			getAIMove();
@@ -33,47 +50,48 @@ public class ShortestPathAlgo {
 			
 		}
 	}
-	protected static Object getAIMove(){
-//		 if fruit is within a set Distance from pacman
-		int minDistance=0;
-		Object curDirection=0;
-		Object lastDirection=0;
+	
+	/**
+	 *This method checks whether the pacman should go ahead or eat the fruit 
+	 */
+	protected static void getAIMove(){
+		Pacman pac= new Pacman();
+		double minDistance=pac.getEatR();
+//		Object curDirection=0;
+//		Object lastDirection=0;
 		int targetY=0;
 		int targetX=0;
 		int curY=0;
 		int curX = 0;
+		
 		if(getDisttToPacman(curX, curY, targetX, targetY) < minDistance){
 			// it tries to go the same direction as pacman
 			try{
-				curDirection = getPacmanDirection(Pac_x, Pac_y);
+				Pac_x = Fru_x;
+				Pac_y = Fru_y;
+				eat(g);
 			}
-			// just incase something goes wrong, it sets the direction as the last direction
-			catch(NullPointerException NPE){
-				curDirection = lastDirection;
+			catch(NullPointerException NPE){	
 			}
-			// and if it can't go that direction, it'll just move according to the standard
-			// ai and try to eat pacman
-			if(!this.moveIsAllowed(curDirection)){
-				tryMove(curX, curY, targetX, targetY);
-			}
+		}	
+		else
+		{
+			getPacmanDirection(Pac_x, Pac_y);
 		}
-
-		lastDirection = curDirection;
-		return  curDirection;
-
+		
 	}
 
-	private void tryMove(int i, int j, int k, int l) {
+	private static void tryMove(int i, int j, int k, int l) {
 		// TODO Auto-generated method stub
 
 	}
-
-	private boolean moveIsAllowed(Object curDirection) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+//
+//	private static boolean moveIsAllowed(Object curDirection) {
+//		// TODO Auto-generated method stub
+//		return false;
+//	}
 	/**
-	 * The function calculates distance to find fruit in the minimum time.
+	 * This method calculates distance between the pacman and the fruit
 	 * @param d
 	 * @param e
 	 * @param f
@@ -123,9 +141,12 @@ public class ShortestPathAlgo {
 		//If the location of the pacman in the X axis is changed to the position of the fruit in the X axis 
 		//and the position of the pacman in the Y axis is different from the fruit position on the Y axis
 		if(Pac_x != Fru_x && Pac_y!= Fru_y) {
-			double temp=locationPac_x;
+			double tempx=locationPac_x;
+			double tempy=locationPac_y;
 			double ans=angleBetPacFruit(locationPac_x, locationPac_y,Fru_x, Fru_y );
-			locationPac_x = locationPac_x+locationPac_x/Math.cos(ans);
+			locationPac_x = locationPac_x+Pac_speed/Math.cos(ans);
+			locationPac_y = locationPac_x+Pac_speed/Math.cos(ans);
+
 		}
 		
 		loc_x_y[0]= locationPac_x;
@@ -134,29 +155,32 @@ public class ShortestPathAlgo {
 	}
 	
 	/**
-	 * If the pecman distance to the fruit is smaller than its feeding distance (its radius) 
-	 * then it will eat the fruit 
-	 * and if it is farther away then it will promote the pecman
+	 * This method remove the fruit from the list if the pecman distance to the fruit is smaller than 
+	 * its feeding distance (its radius) 
 	 * @param g
 	 */
-	private void eat(Game g)
+	private static void eat(Game g)
 	{
-		if(Pac_hasNext && Fruit_hasNext)
-		{
-			if(g.getPacmanArray().iterator().next().getEatR()<=getDisttToPacman(Pac_x,Pac_y,Fru_x,Fru_x))
-					{
-				g.getFruitArray().iterator().remove();
-					}
-			else
-			{
-				getPacmanDirection(Pac_x,Pac_y);
-				//eat(g);
-			}
-		}
+		
+		g.getFruitArray().iterator().remove();
+		
+//		if(Pac_hasNext && Fruit_hasNext)
+//		{
+//			if(g.getPacmanArray().iterator().next().getEatR()<=getDisttToPacman(Pac_x,Pac_y,Fru_x,Fru_x))
+//					{
+//				
+//				g.getFruitArray().iterator().remove();
+//					}
+//			else
+//			{
+//				getPacmanDirection(Pac_x,Pac_y);
+//				//eat(g);
+//			}
+//		}
 	}
 	
 	/**
-	 * This function calculates the angle between the pecman and the fruit
+	 * This method calculates the angle between the pecman and the fruit
 	 * @param PacmanX
 	 * @param PacmanY
 	 * @param FruitX
